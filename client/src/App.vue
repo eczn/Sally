@@ -13,7 +13,7 @@ export default {
 		return {}
 	},
 	created(){
-		
+		http.get('/api'); 
 	},
 	methods: {
 		
