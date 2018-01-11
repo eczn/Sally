@@ -14,8 +14,6 @@ router.post('/', function(req, res, next) {
     
     uname = uname.trim();
     pwd = pwd.trim(); 
-
-    
     
     if (!uname || !pwd) $rps(4000, req.body);
 
@@ -32,6 +30,22 @@ router.post('/', function(req, res, next) {
         $rps(5001, err); 
     })
 });
+
+router.get('/me', function(req, res, next){
+    let { $rps } = res; 
+    let userToken = req.cookies['user']; 
+    let user = auth.de(userToken); 
+
+    $rps(2000, user); 
+});
+
+router.get('/logout', function(req, res){
+    let { $rps } = res; 
+
+    res.cookie('user', ''); 
+
+    $rps(2000, 'OK'); 
+}); 
 
 // 登陆 
 router.post('/login', function(req, res){
