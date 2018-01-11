@@ -9,6 +9,9 @@ const express = require('express')
 router.use('*', function(req, res, next){
 	let $rps = rps.of(res); 
 	res.$rps = $rps; 
+
+	res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+	
 	next(); 
 }); 
 
