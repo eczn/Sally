@@ -1,6 +1,7 @@
 // index.js
 const mysql = require('mysql2')
-    , SQL_LIST = require('../sql/sql-tree')
+    , SQL_LIST = require('./sql/sql-tree')
+    , uuid = require('uuid/v4')
 
 // create the connection to database
 const conn = mysql.createConnection({
@@ -12,6 +13,8 @@ const conn = mysql.createConnection({
 
 
 let Model = {}; 
+
+Model.uuid = uuid; 
 
 Model.debug = true; 
 
@@ -72,9 +75,9 @@ Model.of = function(path){
     }
 }
 
-let s = Model.$('/users/searchBy', 'uname', 'eczn').then(res => {
-    console.log(res); 
-}); 
+// Model.$('/users/findOne', 'uname', 'eczn').then(res => {
+//     console.log(res); 
+// })
 
 
 module.exports = Model; 

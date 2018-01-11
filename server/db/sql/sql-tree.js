@@ -2,9 +2,9 @@
 module.exports = {
     users: {
         findAll: 'SELECT * FROM Users', 
-        searchBy: key => `SELECT * FROM \`Users\` WHERE \`${key}\` = ?`, 
-        new: (uname, pwd) => `
-            INSERT INTO Users (uname, pwd) VALUES ('${uname}', '${pwd}');
+        findOne: key => `SELECT * FROM \`Users\` WHERE \`${key}\` = ?`, 
+        new: (uid, uname, pwd) => `
+            INSERT INTO \`Users\` (uid, uname, pwd) VALUES ('${uid}', '${uname}', '${pwd}');
         `
     }
 }
