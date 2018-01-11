@@ -14,10 +14,19 @@ const conn = mysql.createConnection({
 
 let Model = {}; 
 
+/**
+ * @description uuid 
+ */
 Model.uuid = uuid; 
 
+/**
+ * @description debug mode
+ */
 Model.debug = true; 
 
+/**
+ * @description for sql query 
+ */
 Model.query = function(){
     let args = Array.from(arguments); 
 
@@ -34,6 +43,10 @@ Model.query = function(){
     })
 }
 
+/**
+ * @description query sql-tree, and query it
+ * @param {*} path 
+ */
 Model.$ = function(path){
     let args = Array.from(arguments); 
     let ofRes = this.of.apply(this, args); 
@@ -48,6 +61,10 @@ Model.$ = function(path){
     return this.query(sql, pendding); 
 }
 
+/**
+ * @description query sql-tree 
+ * @param {*} path 
+ */
 Model.of = function(path){
     let paths = path.split('/').filter(e => e); 
     let xs = Array.from(arguments).slice(1); 
@@ -63,6 +80,7 @@ Model.of = function(path){
 
                 return nextNode.apply(nextNode, toApply); 
             } else {
+                pendding = xs; 
                 return nextNode; 
             }
         }, SQL_LIST);
