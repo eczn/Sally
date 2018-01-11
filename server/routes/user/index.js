@@ -7,13 +7,15 @@ const express = require('express')
 
 // 注册
 router.post('/', function(req, res, next) {
+    let { $rps } = res; 
+
     let { uname, pwd } = req.body; 
+    let uid = Model.uuid(); 
     
     uname = uname.trim();
     pwd = pwd.trim(); 
 
-    let uid = Model.uuid(); 
-    let $rps = rps.of(res); 
+    
     
     if (!uname || !pwd) $rps(4000, req.body);
 
@@ -33,8 +35,8 @@ router.post('/', function(req, res, next) {
 
 // 登陆 
 router.post('/login', function(req, res){
+    let { $rps } = res; 
     let { uname, pwd } = req.body; 
-    let $rps = rps.of(res); 
 
     Model.$('/users/findOne', 'uname', uname).then(sqlRes => {
         let user = sqlRes[0]; 

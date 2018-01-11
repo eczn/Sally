@@ -1,15 +1,31 @@
 const express = require('express')
 	, router = express.Router()
 	, user = require('./user')
+	, all = require('./all')
+	, blog = require('./blog')
+	, cate = require('./cate')
+	, rps = require('./rps')
+
+router.use('*', function(req, res, next){
+	let $rps = rps.of(res); 
+	res.$rps = $rps; 
+	next(); 
+}); 
 
 router.get('/', function(req, res, next) {
-	res.json({
-		code: 200, 
-		msg: 'Hello, Sally', 
-		data: null
-	}); 
+	let { $rps } = res; 
+	$rps(2000, 'Hello, Sally'); 
 });
 
-router.use('/user', user); 
+router.use('/user', user);
+
+// For Login; 
+router.use('/', all); 
+
+
+// blog 
+router.use('/blog', blog); 
+
+router.use('/cate', cate);
 
 module.exports = router;
