@@ -61,6 +61,18 @@ http.send = method => function(path, query = {}, data = {}, cb){
 http.get = http.send('get');
 http.post = http.send('post');
 
+import Vue from 'vue'; 
+
+http.errorHandle = res => {
+	let { code, msg } = res; 
+	if (code !== 2000) {
+		Vue.prototype.$message.error(msg);
+		return Promise.reject(null); 
+	} else {
+		return res
+	}
+}
+
 var constFunc = a => a;
 
 var queryStringify = o => {
