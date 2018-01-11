@@ -1,5 +1,6 @@
 const express = require('express')
-    , router = express.Router()
+	, router = express.Router()
+	, user = require('./user')
 
 router.get('/', function(req, res, next) {
 	res.json({
@@ -8,5 +9,7 @@ router.get('/', function(req, res, next) {
 		data: null
 	}); 
 });
+
+router.use('/user', user); 
 
 module.exports = router;
