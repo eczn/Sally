@@ -12,6 +12,16 @@ module.exports = {
             (p, N) => `SELECT * FROM \`Blogs\` ORDER BY created_at DESC LIMIT ${p * N}, ${N}`,
         new: `
             INSERT INTO \`Blogs\` (uid, bid, caid, title, content) VALUES (?, ?, ?, ?, ?);
+        `,
+        findOne: `
+            SELECT  
+                Blogs.bid,  Blogs.content, Blogs.title,  Blogs.created_at,
+                Blogs.caid, Cates.cname,   Cates.intro,
+                Blogs.uid,  Users.uname,   Users.avatar
+            FROM Blogs, Cates, Users
+            WHERE Blogs.caid = Cates.caid AND 
+                Blogs.uid = Users.uid AND 
+                Blogs.bid = ?
         `
     },
     cates: {
@@ -24,6 +34,11 @@ module.exports = {
         `, 
         listAll: `
             SELECT * FROM Cates;
+        `
+    },
+    comments: {
+        new: `
+            INSERT INTRO \`Comments\` (coid, bid, uid, text) VALUES (?, ?, ?, ?); 
         `
     }
 }

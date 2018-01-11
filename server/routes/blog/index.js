@@ -22,6 +22,23 @@ router.get('/', function(req, res){
     }); 
 });
 
+router.get('/one', function(req, res){
+    let { $rps } = res; 
+    let { id, bid } = req.query; 
+
+    // Set Alias 
+    if (id) bid = id; 
+
+    // Error
+    if (!bid) return $rps(4000, req.query); 
+
+    Model.$('/blogs/findOne', bid).then(sqlRes => {
+        $rps(2000, sqlRes); 
+    }).catch(err => {
+        $rps(5001, err); 
+    }); 
+})
+
 router.post('/', function(req, res){
     let { $rps } = res; 
     // title, content, caid 
