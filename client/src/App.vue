@@ -13,7 +13,11 @@ export default {
 		return {}
 	},
 	created(){
-		http.get('/api'); 
+		http.get('/api/user/me').then(res => {
+			let { code, data } = res; 
+
+			if (!data) this.$router.replace('/login'); 
+		}); 
 	},
 	methods: {
 		

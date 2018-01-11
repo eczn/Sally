@@ -1,7 +1,7 @@
 <template>
 	<div class="login-containner">
 		<input type="text" class="username" v-model="user.uname" />
-		<input type="text" class="pwd" v-model="user.pwd">
+		<input type="text" class="pwd" v-model="user.pwd" @keydown.enter="toLogin">
 		<button @click="toLogin">登陆</button>
 	</div>
 </template>
@@ -22,7 +22,10 @@ export default {
 	},
 	methods: {
 		toLogin(){
-			http.post('/api/user/login', this.user).then(ok => {
+			http.post('/api/user/login', this.user).then(res => {
+				let { code, data } = res; 
+
+		        
 
 			}); 
 		}
