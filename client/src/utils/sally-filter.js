@@ -36,5 +36,10 @@ export default {
         
             
         })
+
+        Vue.filter('preFill', function(e, preSet = '00'){
+            const L = preSet.length; 
+            return (preSet + e).slice(-L); 
+        })
     }
 }

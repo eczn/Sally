@@ -62,19 +62,19 @@
                 <el-footer>
                     <h1>共计</h1>
                     <p>
-                        <span bigger>{{ COUNTER.Blogs }}</span> 篇博文
+                        <span bigger>{{ COUNTER.Blogs | preFill('00') }}</span> 篇博文
                     </p>
                     <p>
-                        <span bigger>{{ COUNTER.Users }}</span> 只用户
+                        <span bigger>{{ COUNTER.Users | preFill('00') }}</span> 只用户
                     </p>
                     <p>
-                        <span bigger>{{ COUNTER.Cates }}</span> 个分类
+                        <span bigger>{{ COUNTER.Cates | preFill('00') }}</span> 个分类
                     </p>
                     <p>
-                        <span bigger>{{ COUNTER.Comments }}</span> 条评论
+                        <span bigger>{{ COUNTER.Comments | preFill('00') }}</span> 条评论
                     </p>
                     <p>
-                        <span bigger>{{ COUNTER.Images }}</span> 张图片
+                        <span bigger>{{ COUNTER.Images | preFill('00') }}</span> 张图片
                     </p>
                 </el-footer>
             </el-main>
