@@ -5,7 +5,8 @@ module.exports = {
         findOne: key => `SELECT * FROM \`Users\` WHERE \`${key}\` = ?`, 
         new: (uid, uname, pwd) => `
             INSERT INTO \`Users\` (uid, uname, pwd) VALUES ('${uid}', '${uname}', '${pwd}');
-        `
+        `,
+        count: `SELECT COUNT(*) AS COUNT FROM Users`
     },
     blogs: {
         count: `
@@ -60,6 +61,15 @@ module.exports = {
         new: `
             INSERT INTRO \`Comments\` (coid, bid, uid, text) VALUES (?, ?, ?, ?); 
         `
+    },
+    sys: {
+        countAll: [
+            `SELECT COUNT(*) AS Blogs    FROM Blogs`,
+            `SELECT COUNT(*) AS Cates    FROM Cates`,
+            `SELECT COUNT(*) AS Comments FROM Comments`,
+            `SELECT COUNT(*) AS Images   FROM Images`,
+            `SELECT COUNT(*) AS Users    FROM Users`
+        ]
     }
 }
 

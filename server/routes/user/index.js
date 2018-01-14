@@ -31,6 +31,16 @@ router.post('/', function(req, res, next) {
     })
 });
 
+router.get('/count', function(_, res){
+    let { $rps } = res; 
+
+    Model.$('/users/count').then(res => {
+        $rps(2000, res[0] && res[0].COUNT); 
+    }).catch(err => {
+        $rps(5001, err); 
+    })
+})
+
 router.get('/me', function(req, res, next){
     let { $rps } = res; 
     let userToken = req.cookies['user']; 
