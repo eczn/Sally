@@ -1,5 +1,6 @@
 <template>
 	<div id="app">
+		<!-- <user-bar></user-bar> -->
 		<router-view></router-view>
 	</div>
 </template>
@@ -29,6 +30,7 @@ export default {
 body {
 	color: #555; 
 	font-family: "Consolas", "Menlo"; 
+	list-style: none;
 }
 
 * {

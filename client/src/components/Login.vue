@@ -25,8 +25,7 @@ export default {
 			http.post('/api/user/login', this.user).then(res => {
 				let { code, data } = res; 
 
-		        
-
+				this.$router.replace('/list'); 
 			}); 
 		}
 	}
