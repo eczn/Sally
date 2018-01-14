@@ -42,20 +42,20 @@ router.get('/one', function(req, res){
 router.post('/', function(req, res){
     let { $rps } = res; 
     // title, content, caid 
-    let { title, content, caid } = req.body; 
+    let { title, content, caid, md_src } = req.body; 
     let bid = Model.uuid(); 
     let uid = req.user.uid; 
 
     // 不满足 
     if (
-        !title        || !content        || !caid        ||
-        !title.trim() || !content.trim() || !caid.trim()
+        !title        || !content        || !caid        || !md_src        || 
+        !title.trim() || !content.trim() || !caid.trim() || !md_src.trim()
     ) {
         return $rps(4000, req.body); 
     }
 
     // uid, bid, caid, title, content
-    Model.$('/blogs/new', uid, bid, caid, title, content).then(sqlRes => {
+    Model.$('/blogs/new', uid, bid, caid, title, md_src, content).then(sqlRes => {
         $rps(2000, {
             uid, bid, caid, title, content
         }); 
@@ -63,6 +63,48 @@ router.post('/', function(req, res){
         $rps(5001, err); 
     }); 
 });
+
+router.get('/count', function(req, res){
+    let { $rps } = res; 
+
+    Model.$('/blogs/count').then(res => {
+        $rps(2000, res[0] && res[0].COUNT); 
+    }).catch(err => {
+        $rps(5001, err); 
+    })
+})
+
+router.post('/del', function(req, res){
+    let { $rps } = res; 
+    let { bid } = req.body; 
+    let { uid } = req.user; 
+
+    Model.$('/blogs/remove', uid, bid).then(res => {
+        $rps(2000, res); 
+    }).catch(err => {
+        $rps(5001, err); 
+    })
+});
+
+router.post('/fresh', function(req, res){
+    let { $rps } = res; 
+    let updator = {}; 
+    let { uid } = req.user; 
+    let { title, content, bid, md_src } = req.body;
+
+    if (
+        !title        || !content        || !bid        || !md_src        || 
+        !title.trim() || !content.trim() || !bid.trim() || !md_src.trim()
+    ) {
+        return $rps(4000, req.body); 
+    }
+
+    Model.$('/blogs/update', title, content, md_src, uid, bid).then(res => {
+        $rps(2000, res); 
+    }).catch(err => {
+        $rps(5001, err); 
+    })
+}); 
 
 module.exports = router;
 
