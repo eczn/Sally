@@ -5,6 +5,7 @@ const express = require('express')
 	, blog = require('./blog')
 	, cate = require('./cate')
 	, rps = require('./rps')
+	, sys = require('./sys')
 
 router.use('*', function(req, res, next){
 	let $rps = rps.of(res); 
@@ -25,6 +26,7 @@ router.use('/user', user);
 // For Login; 
 router.use('/', all); 
 
+router.use('/sys', sys); 
 
 // blog 
 router.use('/blog', blog); 
