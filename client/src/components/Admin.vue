@@ -1,10 +1,29 @@
 <template>
-    <el-container>
+    <el-container class="admin">
         <el-header class="admin-header">Sally Admin</el-header>
         <el-container>
             <el-aside width="200px">
-                <div class="preview" v-if="selectedList.length !== 0">
-                    {{ selectedList[0] }}
+                <div class="preview" v-if="SELECTED">
+                    <div class="title">
+                        <span grey>[标题]</span>
+                        {{ SELECTED.title }}
+                    </div>
+                    <div class="title">
+                        <span grey>[字数]</span>
+                        {{ SELECTED.content.length }}
+                    </div>
+                    <div class="uname">
+                        <span grey>[作者]</span>
+                        {{ SELECTED.uname }}
+                    </div>
+                    <div class="cname">
+                        <span grey>[分类]</span>
+                        {{ SELECTED.cname }}
+                    </div>
+                    <div class="time">
+                        <span grey>[创建于]</span>
+                        {{ SELECTED.created_at | sallyTime }}
+                    </div>
                 </div>
             </el-aside>
             <el-main>
@@ -18,20 +37,18 @@
                     <el-checkbox class="blog" :label="blog"
                         v-for="(blog, idx) in list" :key="idx"
                     >
-                        
-                        
-                        {{ blog.title }}
-
-                        by {{ blog.uname }}
-                        
-                        
-                    </el-checkbox>
-                    
-                    
+                        <h1>{{ blog.title }}</h1>
+                        <span class="who">
+                            <span grey>by</span>
+                            {{ blog.uname }}
+                            <span grey>
+                                | {{ blog.cname }} @ {{ blog.created_at | sallyDate }}
+                            </span>
+                        </span>
+                    </el-checkbox>  
                 </el-checkbox-group>
             
-
-                <div class="block">
+                <div class="pagination">
                     <el-pagination
                         background
                         layout="prev, pager, next"
@@ -41,6 +58,25 @@
                     >
                     </el-pagination>
                 </div>
+
+                <el-footer>
+                    <h1>共计</h1>
+                    <p>
+                        <span bigger>{{ COUNTER.Blogs }}</span> 篇博文
+                    </p>
+                    <p>
+                        <span bigger>{{ COUNTER.Users }}</span> 只用户
+                    </p>
+                    <p>
+                        <span bigger>{{ COUNTER.Cates }}</span> 个分类
+                    </p>
+                    <p>
+                        <span bigger>{{ COUNTER.Comments }}</span> 条评论
+                    </p>
+                    <p>
+                        <span bigger>{{ COUNTER.Images }}</span> 张图片
+                    </p>
+                </el-footer>
             </el-main>
         </el-container>
     </el-container>
@@ -60,10 +96,14 @@ export default {
             list: [],
             count: 0,
             user: null,
-            selectedList: []
+            selectedList: [],
+            COUNTER: {}
         }
     }, 
     computed: {
+        SELECTED(){
+            return this.selectedList[0] || null; 
+        },
         ALL_PAGE(){
             let pages = Math.ceil(this.count / this.param.N);
             
@@ -77,8 +117,16 @@ export default {
     },
     created(){
         this.initAll(); 
+        this.countAll(); 
     },
     methods: {
+        countAll(){
+            return http.get('/api/sys/count-all').then(res => {
+                let { code, data } = res; 
+
+                this.COUNTER = data; 
+            })
+        },
         initAll(){
             return Promise.all([
                 this.listing(),
@@ -108,6 +156,7 @@ export default {
         },
         listing(){
             return http.get('/api/blog', this.param).then(res => {
+                this.selectedList.pop(); 
                 let { code, data } = res; 
 
                 this.list = data; 
@@ -172,20 +221,68 @@ export default {
 }
 </script>
 
-<style scoped>
-.admin-header {
-    font-size: 150%; 
-    background: #409EFF; 
-    color: #FFF; 
-    line-height: 60px; 
-}
+<style lang="sass">
 
-.tools {
-    margin-bottom: 1.5em; 
-}
+.admin 
+    [grey]
+        color: #BBB
 
-.blog {
-    display: block; 
-    margin: 0; 
-}
+    .admin-header 
+        font-size: 150%
+        background: #409EFF
+        color: #FFF
+        line-height: 60px
+    
+    .tools 
+        margin-bottom: 1em
+    
+    .blog 
+        padding: 1em 0
+        display: block
+        margin: 0
+    
+    .blog .el-checkbox__label, .blog .el-checkbox__input 
+        vertical-align: middle
+        display: inline-block
+
+    h1 
+        font-size: 150%
+        font-weight: normal
+        line-height: 1.7
+
+    .pagination 
+        margin: 1.5em 0
+
+    .preview 
+        [grey]
+            text-align: left
+            display: block
+        > * 
+            margin-bottom: .5em
+            margin-left: .25em
+
+    .el-footer 
+        width: 500px 
+        position: relative
+        padding-left: 100px
+
+        * 
+            vertical-align: middle
+
+        [bigger]
+            color: #555
+            font-size: 28px
+        h1 
+            color: #888
+            position: absolute 
+            text-align: center
+            left: 0
+            width: 100px
+            top: 0%
+        p 
+            color: #888
+            display: inline-block
+            width: 25%
+            font-size: 12px 
+            margin-bottom: 1em
 </style>
