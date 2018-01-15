@@ -7,6 +7,7 @@ const express = require('express')
 	, rps = require('./rps')
 	, sys = require('./sys')
 	, comment = require('./comment')
+	, img = require('./img')
 
 router.use('*', function(req, res, next){
 	let $rps = rps.of(res); 
@@ -33,6 +34,8 @@ router.use('/sys', sys);
 router.use('/blog', blog); 
 
 router.use('/cate', cate);
+
+router.use('/img', img); 
 
 router.use('/comment', comment); 
 

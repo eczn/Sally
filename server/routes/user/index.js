@@ -48,6 +48,22 @@ router.post('/update', function(req, res){
     }).catch(err => {
         $rps(5001, err); 
     }); 
+});
+
+router.get('/fresh-cookie', function(req, res){
+    let { $rps } = res; 
+    let userToken = req.cookies['user']; 
+    let { uname } = auth.de(userToken); ; 
+
+    Model.$('/users/findToLogin', 'uname', uname).then(sqlRes => {
+
+        let user = sqlRes[0]; 
+        delete user.pwd; 
+        let token = auth.en(user);
+        res.cookie('user', token); 
+        $rps(2000, token); 
+
+    }).catch(err => $rps(5001, err)); 
 })
 
 router.get('/count', function(_, res){

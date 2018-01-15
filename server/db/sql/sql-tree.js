@@ -3,7 +3,7 @@ module.exports = {
     users: {
         findAll: 'SELECT * FROM Users', 
         findOne: key => `
-            SELECT uid, uname, avatar, role, created_at, uintro, mail, github, sf
+            SELECT uid, uname, avatar, role, created_at, uintro, mail, github, sf, bg_url
             FROM \`Users\` WHERE \`${key}\` = ?
         `, 
         findToLogin: key => `
@@ -85,13 +85,18 @@ module.exports = {
         findWith: key => `
             SELECT Comments.coid, Comments.uid, Comments.text, Comments.bid, Comments.created_at,
                 Users.uname, Users.avatar
-            FROM Comments, Users WHERE ${key} = ? 
+            FROM Comments, Users 
+            WHERE ${key} = ? AND
+                Comments.uid = Users.uid
             ORDER BY Comments.created_at DESC
         `,
         linkAll: key => `
             SELECT Comments.coid, Comments.uid, Comments.text, Comments.bid, Comments.created_at,
                 Users.uname, Users.avatar, Blogs.title
-            FROM Comments, Users, Blogs WHERE ${key} = ? 
+            FROM Comments, Users, Blogs
+                WHERE ${key} = ? AND 
+                    Comments.uid = Users.uid AND 
+                    Comments.bid = Blogs.bid
             ORDER BY Comments.created_at DESC
         `
     },
@@ -103,6 +108,16 @@ module.exports = {
             `SELECT COUNT(*) AS Images   FROM Images`,
             `SELECT COUNT(*) AS Users    FROM Users`
         ]
+    },
+    images: {
+        findOne: key => `
+            SELECT * FROM Images, Users 
+            WHERE Images.uid = Users.uid AND
+                ${key} = ?
+        `,
+        new: `
+            INSERT INTO Images (imid, uid, url) VALUES (?, ?, ?); 
+        `
     }
 }
 
