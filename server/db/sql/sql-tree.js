@@ -6,6 +6,10 @@ module.exports = {
             SELECT uid, uname, avatar, role, created_at, uintro, mail, github, sf
             FROM \`Users\` WHERE \`${key}\` = ?
         `, 
+        findToLogin: key => `
+            SELECT * FROM Users 
+            WHERE ${key} = ?
+        `,
         new: (uid, uname, pwd) => `
             INSERT INTO \`Users\` (uid, uname, pwd) VALUES ('${uid}', '${uname}', '${pwd}');
         `,

@@ -90,7 +90,7 @@ router.post('/login', function(req, res){
     let { $rps } = res; 
     let { uname, pwd } = req.body; 
 
-    Model.$('/users/findOne', 'uname', uname).then(sqlRes => {
+    Model.$('/users/findToLogin', 'uname', uname).then(sqlRes => {
         let user = sqlRes[0]; 
 
         if (user){
