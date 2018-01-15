@@ -45,6 +45,10 @@
             </div>    
         </div>
 
+        <div v-if="isMe" class="me-btns">
+            <el-button @click="toLogout" type="danger">退出登陆</el-button>
+        </div>
+
         <div class="middle-text" v-if="blogs.length !== 0">他最近的文章</div>
         <div class="middle-text" v-else>他还没有写过文章喔</div>
         <div class="blogs comments">
@@ -200,6 +204,17 @@ export default {
             }).catch(err => {
                 console.log(err); 
             })
+        },
+        toLogout(){
+            return http.get('/api/user/logout').then(res => {
+                this.$notify({
+                    title: '注销成功',
+                    message: `回到登陆界面`,
+                    type: 'success'
+                });
+
+                this.$router.replace('/login'); 
+            }); 
         }
     }
 }
@@ -305,4 +320,8 @@ export default {
         &:hover 
             // font-size: 18px
             transform: scale(1)
+
+    .me-btns 
+        margin: 1em 0
+        text-align: center
 </style>

@@ -53,7 +53,10 @@ router.post('/update', function(req, res){
 router.get('/fresh-cookie', function(req, res){
     let { $rps } = res; 
     let userToken = req.cookies['user']; 
-    let { uname } = auth.de(userToken); ; 
+    let uname; 
+    try {
+        uname = auth.de(userToken).uname; 
+    } catch (err) { return $rps(2000, 'no login') }
 
     Model.$('/users/findToLogin', 'uname', uname).then(sqlRes => {
 

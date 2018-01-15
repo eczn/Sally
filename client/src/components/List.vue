@@ -2,7 +2,7 @@
     <div>
         <header>
             <div class="header-inner">
-                <router-link class="to-admin" to="/admin"></router-link>
+                <div class="to-admin" @click="gotoAdmin"></div>
                 <!-- <div class="to-admin"></div> -->
                 Sally Blog
 
@@ -20,7 +20,7 @@
         </header>
 
 
-        <div class="list">
+        <div class="list" v-if="!searchMode">
             <div @click="toDetail(blog)" class="blog"
                 v-for="(blog, idx) in list" :key="idx">
 
@@ -53,7 +53,54 @@
                 >
                 </el-pagination>
             </div>
+
+            <div class="bottom-btn">
+                <el-button type="primary" icon="el-icon-search" @click="toSearch">
+                    搜索
+                </el-button>
+            </div>
         </div>
+
+
+        <div class="list" v-else>
+            <div class="bottom-btn">
+                <el-button type="primary" icon="el-icon-search" @click="searchMode = false">
+                    关闭搜索
+                </el-button>
+            </div>
+
+            <div class="middle-text" v-if="searchList.length === 0">暂无 '{{ searchWord }}' 的搜索结果</div>
+            <div class="middle-text" v-else>以下为 '{{ searchWord }}' 的搜索结果</div>
+            <div @click="toDetail(blog)" class="blog"
+                v-for="(blog, idx) in searchList" :key="idx">
+
+                <div class="line top-line">
+                    <div class="created_at">
+                        <img src="../assets/icons/date.svg" class="blog-icon">
+                        <span>{{ blog.created_at | sallyDate }}</span>
+                    </div>
+
+                    <div class="tags">
+                        <img src="../assets/icons/tag.svg" class="blog-icon">
+                        <span>Sally</span>
+                    </div>
+                </div>
+                <div class="title">{{ blog.title }}</div>
+                <div class="intro">{{ blog.md_src.slice(0, 20) }} ...</div>
+
+                <div class="line">
+                    <div class="cate">分类于{{ blog.cname }}, @{{ blog.uname }}</div>
+                </div>
+            </div>
+
+            <div class="middle-text" v-if="searchList.length !== 0">共计 {{ searchList.length }} 条</div>
+        </div>
+
+
+
+
+
+
     </div>
 </template>
 
@@ -70,7 +117,10 @@ export default {
             },
             list: [],
             count: 0,
-            user: null
+            user: null,
+            searchMode: false,
+            searchList: [],
+            searchWord: ''
         }
     }, 
     computed: {
@@ -136,6 +186,38 @@ export default {
             this.$router.push({
                 path: '/detail/' + blog.bid
             }); 
+        },
+        gotoAdmin(){
+            if (this.user.role === 0) {
+                this.$router.push('/admin'); 
+            } else {
+                this.$message({
+                    type: 'warning',
+                    message: '只有管理员才能进入管理页喔'
+                }); 
+            }
+        },
+        toSearch(){
+            this.$prompt('请输入搜索关键字', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                inputPattern: /./,
+                inputErrorMessage: '格式不正确'
+            }).then(({ value }) => {
+                console.log(value); 
+                this.searchWord = value; 
+                return http.get('/api/blog/search', {
+                    q: value
+                })
+            }).then(({ code, data, msg }) => {
+                this.searchMode = true; 
+                this.searchList = data; 
+            }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '取消输入'
+                });
+            });
         }
     }
 }
@@ -268,6 +350,10 @@ header {
 }
 .blog:hover .cate {
     margin-left: 14px;
+}
+
+.bottom-btn {
+    margin: 4em 0; 
 }
 </style>
 

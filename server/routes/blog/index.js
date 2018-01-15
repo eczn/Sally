@@ -51,6 +51,17 @@ router.get('/one', function(req, res){
     }); 
 })
 
+router.get('/search', function(req, res){
+    let { q } = req.query; 
+    let { $rps } = res; 
+
+    if (!q || !q.trim()) return $rps(4001, req.query); 
+
+    Model.$('/blogs/searchAll', q).then(sqlRes => {
+        $rps(2000, sqlRes); 
+    }).catch(err => $rps(5001, err)); 
+});
+
 router.post('/', function(req, res){
     let { $rps } = res; 
     // title, content, caid 
