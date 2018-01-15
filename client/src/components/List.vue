@@ -1,28 +1,46 @@
 <template>
-    <div class="list">
-        <router-link class="blog" :to="'/detail/' + blog.bid" v-for="(blog, idx) in list" :key="idx">
-            <div class="title">{{ blog.title }}</div>
-            <div class="created_at">{{ blog.created_at }}</div>
-            <div class="intro">{{ blog.content.slice(0, 10) }} ...</div>
-            <div class="cate">{{ blog.cname }}</div>
-            <div class="user">
-                {{ blog.uname }}
-                {{ blog.avatar }}
+    <div>
+        <header>
+            <div class="header-inner">Sally</div>
+        </header>
+
+
+        <div class="list">
+            <div @click="toDetail(blog)" class="blog"
+                v-for="(blog, idx) in list" :key="idx">
+
+                <div class="line top-line">
+                    <div class="created_at">
+                        <img src="../assets/icons/date.svg" class="blog-icon">
+                        <span>{{ blog.created_at | sallyDate }}</span>
+                    </div>
+
+                    <div class="tags">
+                        <img src="../assets/icons/tag.svg" class="blog-icon">
+                        <span>Sally</span>
+                    </div>
+                </div>
+                <div class="title">{{ blog.title }}</div>
+                <div class="intro">{{ blog.md_src.slice(0, 20) }} ...</div>
+
+                <div class="line">
+                    <div class="cate">分类于{{ blog.cname }}, @{{ blog.uname }}</div>
+                </div>
             </div>
-        </router-link>
 
-        <div class="block">
-            <el-pagination
-                background
-                layout="prev, pager, next"
-                :size="param.N"
-                :page-count="PAGE_COUNT"
-                @current-change="pageChange"
-            >
-            </el-pagination>
+            <div class="block">
+                <el-pagination
+                    background
+                    layout="prev, pager, next"
+                    :size="param.N"
+                    :page-count="PAGE_COUNT"
+                    @current-change="pageChange"
+                >
+                </el-pagination>
+            </div>
+
+            <router-link to="/admin">Admin</router-link>
         </div>
-
-        <router-link to="/admin">Admin</router-link>
     </div>
 </template>
 
@@ -86,12 +104,31 @@ export default {
 
                 this.list = data; 
             }); 
+        },
+        toDetail(blog){
+            // :to="'/detail/' + blog.bid"
+            this.$router.push({
+                path: '/detail/' + blog.bid
+            }); 
         }
     }
 }
 </script>
 
 <style scoped>
+
+header {
+    border-bottom: 1px solid #DDD; 
+    margin-bottom: 20px; 
+}
+
+.header-inner {
+    font-size: 24px;
+    line-height: 80px; 
+    max-width: 700px;
+    margin: 0 auto; 
+}
+
 .list {
     max-width: 700px;
     margin: 0 auto; 
@@ -99,7 +136,71 @@ export default {
 
 .blog {
     display: block; 
+    cursor: pointer;
     margin-bottom: 3em; 
+}
+
+.blog .title {
+    margin: .3em 0;
+    transition: all .3s; 
+    font-size: 160%; 
+}
+
+.blog .intro {
+    opacity: .7;
+    transition: all .3s; 
+    margin-bottom: .5em; 
+}
+
+.blog .tags {
+    opacity: .6;
+    transition: all .3s; 
+}
+
+.blog .line {
+    vertical-align: middle;
+    font-size: 80%;
+    transition: all .3s; 
+    margin-bottom: .5em;
+}
+
+.blog .created_at {
+    opacity: .6;
+    transition: all .3s; 
+    display: inline-block;
+}
+
+.blog > * > * {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.blog .cate {
+    color: rgb(64, 158, 255);
+    opacity: .6;
+    transition: all .3s; 
+}
+
+.blog:hover .tags,
+.blog:hover .created_at,
+.blog:hover .cate,
+.blog:hover .intro {
+    opacity: 1;
+}
+.blog:hover .title {
+    margin-left: -16px;
+    margin-top: .5em;
+    margin-bottom: .8em; 
+    text-shadow: 44px  12px 0 rgba(0, 0, 0, .1),
+                 16px -6px 0 rgba(0, 0, 0, .05);
+    color: #222;
+}
+.blog:hover .top-line,
+.blog:hover .intro {
+    margin-left: 6px;
+}
+.blog:hover .cate {
+    margin-left: 14px;
 }
 </style>
 

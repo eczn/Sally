@@ -42,6 +42,12 @@ body {
 [inb] {
 	display: inline-block;
 }
+
+.blog-icon {
+	width: 1.25em; 
+	vertical-align: middle;
+}
+
 ::-webkit-scrollbar {
     width: 5px;
     height: 16px;

@@ -33,8 +33,6 @@ export default {
                     d.getDate()
                 ].map(e => ('00' + e).slice(-2))
             ).join('-')
-        
-            
         })
 
         Vue.filter('preFill', function(e, preSet = '00'){
