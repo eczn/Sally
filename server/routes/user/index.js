@@ -39,7 +39,16 @@ router.get('/count', function(_, res){
     }).catch(err => {
         $rps(5001, err); 
     })
-})
+});
+
+router.get('/find', function(req, res){
+    let { $rps } = res; 
+    let { uid } = req.query; 
+
+    Model.$('/users/findOne', 'uid', uid).then(sqlRes => {
+        $rps(2000, sqlRes); 
+    }).catch(err => $rps(5001, err)); 
+}); 
 
 router.get('/me', function(req, res, next){
     let { $rps } = res; 

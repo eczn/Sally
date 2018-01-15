@@ -17,6 +17,15 @@ router.get('/', function(req, res){
     }); 
 }); 
 
+router.get('/by-user', function(req, res){
+    let { uid } = req.query; 
+    let { $rps } = res; 
+
+    Model.$('/comments/linkAll', 'Comments.uid', uid)
+        .then(sqlRes => $rps(2000, sqlRes))
+        .catch(err =>   $rps(5001, err)); 
+})
+
 router.post('/', function(req, res){
     let { $rps } = res; 
 

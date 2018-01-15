@@ -2,7 +2,10 @@
 module.exports = {
     users: {
         findAll: 'SELECT * FROM Users', 
-        findOne: key => `SELECT * FROM \`Users\` WHERE \`${key}\` = ?`, 
+        findOne: key => `
+            SELECT uid, uname, avatar, role, created_at, uintro, mail, github, sf
+            FROM \`Users\` WHERE \`${key}\` = ?
+        `, 
         new: (uid, uname, pwd) => `
             INSERT INTO \`Users\` (uid, uname, pwd) VALUES ('${uid}', '${uname}', '${pwd}');
         `,
@@ -43,6 +46,16 @@ module.exports = {
             WHERE Blogs.caid = Cates.caid AND 
                 Blogs.uid = Users.uid AND 
                 Blogs.bid = ?
+        `,
+        findByUser: `
+            SELECT  
+                Blogs.bid,  Blogs.content, Blogs.title,  Blogs.created_at, Blogs.md_src,
+                Blogs.caid, Cates.cname,   Cates.intro,
+                Blogs.uid,  Users.uname,   Users.avatar
+            FROM Blogs, Cates, Users
+            WHERE Blogs.caid = Cates.caid AND 
+                Blogs.uid = Users.uid AND 
+                Users.uid = ?
         `
     },
     cates: {
@@ -65,6 +78,12 @@ module.exports = {
             SELECT Comments.coid, Comments.uid, Comments.text, Comments.bid, Comments.created_at,
                 Users.uname, Users.avatar
             FROM Comments, Users WHERE ${key} = ? 
+            ORDER BY Comments.created_at DESC
+        `,
+        linkAll: key => `
+            SELECT Comments.coid, Comments.uid, Comments.text, Comments.bid, Comments.created_at,
+                Users.uname, Users.avatar, Blogs.title
+            FROM Comments, Users, Blogs WHERE ${key} = ? 
             ORDER BY Comments.created_at DESC
         `
     },

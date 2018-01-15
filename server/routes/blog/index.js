@@ -22,6 +22,18 @@ router.get('/', function(req, res){
     }); 
 });
 
+router.get('/by-user', function(req, res){
+    let { $rps } = res; 
+    let { uid } = req.query;
+
+    Model.$('/blogs/findByUser', uid).then(sqlRes => {
+        $rps(2000, sqlRes); 
+    }).catch(err => {
+        console.log(err); 
+        $rps(5001, err); 
+    }); 
+})
+
 router.get('/one', function(req, res){
     let { $rps } = res; 
     let { id, bid } = req.query; 
