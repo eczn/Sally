@@ -59,10 +59,13 @@ module.exports = {
     },
     comments: {
         new: `
-            INSERT INTRO \`Comments\` (coid, bid, uid, text) VALUES (?, ?, ?, ?); 
+            INSERT INTO \`Comments\` (coid, bid, uid, text) VALUES (?, ?, ?, ?); 
         `,
         findWith: key => `
-            SELECT * FROM Comments WHERE ${key} = ?
+            SELECT Comments.coid, Comments.uid, Comments.text, Comments.bid, Comments.created_at,
+                Users.uname, Users.avatar
+            FROM Comments, Users WHERE ${key} = ? 
+            ORDER BY Comments.created_at DESC
         `
     },
     sys: {
