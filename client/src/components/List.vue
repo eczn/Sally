@@ -1,7 +1,22 @@
 <template>
     <div>
         <header>
-            <div class="header-inner">Sally</div>
+            <div class="header-inner">
+                <router-link class="to-admin" to="/admin"></router-link>
+                <!-- <div class="to-admin"></div> -->
+                Sally Blog
+
+                <div class="user-info" v-if="user" @click="toMyInfo">
+                    <span class="user-avatar" :style="{
+                        backgroundImage: `url(${user.avatar})`
+                    }"></span>
+                </div>
+                <div class="user-info" v-else @click="toLogin">
+                    <span class="user-avatar" :style="{
+                        backgroundColor: '#BBB'
+                    }"></span>
+                </div>
+            </div>
         </header>
 
 
@@ -38,8 +53,6 @@
                 >
                 </el-pagination>
             </div>
-
-            <router-link to="/admin">Admin</router-link>
         </div>
     </div>
 </template>
@@ -78,6 +91,19 @@ export default {
         this.userInit(); 
     },
     methods: {
+        toLogin(){
+            this.$router.push({
+                path: '/login', 
+                query: {
+                    back: '/list'
+                }
+            }); 
+        },
+        toMyInfo(){
+            this.$router.push({
+                path: '/user/' + this.user.uid
+            }); 
+        },
         userInit(){
             return http.get('/api/user/me').then(res => {
                 let { code, data } = res; 
@@ -123,10 +149,51 @@ header {
 }
 
 .header-inner {
+    position: relative;
     font-size: 24px;
     line-height: 80px; 
     max-width: 700px;
     margin: 0 auto; 
+}
+
+.to-admin {
+    cursor: pointer;
+    position: absolute;
+    left: -2em;
+    width: 1em;
+    height: 1em;
+    border-radius: 1em; 
+    background-color: #FEFEFE; 
+    box-shadow: 4px 4px 0 #BBB;
+    top: 50%; 
+    transform: translateY(-60%);
+    margin: 0;
+    transition: all .3s; 
+}
+
+.to-admin:hover {
+    /* background-color: rgba(64, 158, 255, 1); */
+    background-color: #BBB;
+    box-shadow: -0px -0px 0 rgba(64, 158, 255, .2);
+}
+
+.user-info {
+    cursor: pointer;
+    position: absolute; 
+    display: flex; 
+    align-items: center;
+    right: 0;
+    top: 0;
+    height: 100%;
+}
+
+.user-avatar {
+    display: inline-block;
+    width: 2em;
+    height: 2em; 
+    margin-top: -.2em;
+    background-size: cover;
+    border-radius: 4px;
 }
 
 .list {

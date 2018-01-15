@@ -48,6 +48,13 @@ body {
 	vertical-align: middle;
 }
 
+.middle-text {
+	text-align: center;
+	padding: 5em 0;
+	font-size: 20px;
+	color: #BBB;
+}
+
 ::-webkit-scrollbar {
     width: 5px;
     height: 16px;

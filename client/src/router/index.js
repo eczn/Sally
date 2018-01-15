@@ -5,6 +5,7 @@ import List from '@/components/List';
 import Admin from '@/components/Admin';
 import Detail from '@/components/Detail'; 
 import Edit from '@/components/Edit'; 
+import User from '@/components/User'; 
 
 Vue.use(Router);
 
@@ -30,6 +31,12 @@ export default new Router({
 			props: true, 
 			component: Detail
 		},
+		{
+			path: '/user/:uid', 
+			name: 'User', 
+			props: true, 
+			component: User
+		}, 
 		{
 			path: '/admin', 
 			name: 'Admin', 
