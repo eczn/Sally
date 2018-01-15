@@ -9,27 +9,29 @@
             <div class="username">
                 {{ user.uname }}
             </div>
-            <div class="userintro">
+            <div class="userintro" @click="toUpdate('uintro')">
                 {{ user.uintro || '该用户还没有写介绍喔' }}
             </div>
         </div>
 
         <div class="content">
-            
-            <div class="line">
+            <div class="line" @click="toUpdate('mail')">
                 <p class="l">@: </p>
                 <p class="r">{{ user.mail || '-' }}</p>
             </div>
-            <div class="line">
+            <div class="line" @click="toUpdate('github')">
                 <p class="l">>_ </p>
                 <p class="r">{{ user.github || '-' }}</p>
             </div>
-            <div class="line">
+            <div class="line" @click="toUpdate('sf')">
                 <p class="l">S<span style="color: rgba(20, 174, 117, .5);" class="sf-green">F</span> </p>
                 <p class="r">{{ user.sf || '-' }}</p>
             </div>
             <div></div>
-            <div class="line">
+            <div class="line" @click="$message({
+                message: '用户身份管理请到后台管理页',
+                type: 'warning'
+            });">
                 <p class="l">$: </p>
                 <p class="r">{{ ['管理员', '普通用户'][user.role] }}</p>
             </div>    
@@ -38,7 +40,7 @@
         <div class="middle-text" v-if="blogs.length !== 0">他最近的文章</div>
         <div class="middle-text" v-else>他还没有写过文章喔</div>
         <div class="blogs comments">
-            <li v-for="(blog, idx) in blogs" :key="idx" class="blog comment"
+            <li v-for="(blog, idx) in blogs.slice(0, 5)" :key="idx" class="blog comment"
                 @click="pageRouter('/detail/' + blog.bid)">
                 <div class="line meta-top">字数：{{ blog.md_src.length }}</div>
                 <div class="line">
@@ -80,16 +82,35 @@ export default {
     data(){
         return {
             user: null,
+            me: null, 
             comments: [],
             blogs: []
         }
     }, 
     created(){
-        this.initUser(); 
-        this.initComments();
-        this.initBlogs();
+        Promise.all([
+            this.initUser(),
+            this.initMe(),
+            this.initComments(),
+            this.initBlogs()
+        ]).then(allDone => {
+            if (this.isMe) this.$notify.info({
+                title: 'Hello ~',
+                message: '这是自己的资料页，点击字段可以进行编辑'
+            });
+        });
     },
+    computed: {
+        isMe(){
+            return this.me && (this.me.uid === this.user.uid); 
+        }
+    }, 
     methods: {
+        initMe(){
+            return http.get('/api/user/me').then(({ code, data }) => {
+                if (code === 2000) this.me = data; 
+            }); 
+        },
         initUser(){
             return http.get('/api/user/find', {
                 uid: this.uid
@@ -115,6 +136,38 @@ export default {
             this.$router.push({
                 path
             }); 
+        },
+        toUpdate(key){
+            if (this.isMe){
+                return this.$prompt('请输入新值', `你正在修改 ${key} 字段`, {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    inputPattern: /./,
+                    inputErrorMessage: '格式不正确'
+                }).then(({ value }) => {
+                    return this.pushUpdate(key, value); 
+                }).catch(err => {
+
+                    console.log(err); 
+                    this.$message({
+                        type: 'info',
+                        message: '取消'
+                    });
+                });
+            }
+        },
+        pushUpdate(key, val){
+            this.$message({
+                type: 'success',
+                message: key + ' -> ' + val
+            });
+
+            return http.post('/api/user/update', {
+                key, val
+            }).then(res => {
+                let { code, data } = res; 
+                if (code === 2000) this.user[key] = val; 
+            })
         }
     }
 }
@@ -150,16 +203,20 @@ export default {
             text-shadow: 3px 2px 0 rgba(0, 0, 0, .4)
 
         .userintro
+            cursor: pointer
             top: 100%
             right: 10%
             margin: .5em 0
 
-    .content 
+    .content
+        padding-bottom: 50px
+        border-bottom: 1px solid #DDD 
         margin-top: 100px
         font-size: 0
         > * 
             font-size: 16px
-        .line 
+        .line  
+            cursor: pointer
             max-width: 350px
             display: inline-block
             box-sizing: border-box

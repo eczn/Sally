@@ -31,6 +31,25 @@ router.post('/', function(req, res, next) {
     })
 });
 
+router.post('/update', function(req, res){
+    let { key, val } = req.body; 
+    let userToken = req.cookies['user']; 
+    let user = auth.de(userToken); 
+    let { uid } = user; 
+    let { $rps } = res; 
+
+    if (
+        !key        || !val        ||
+        !key.trim() || !val.trim()
+    ) return $rps(4001, req.body); 
+
+    Model.$('/users/updateOne', key, val, uid).then(r => {
+        $rps(2000, r); 
+    }).catch(err => {
+        $rps(5001, err); 
+    }); 
+})
+
 router.get('/count', function(_, res){
     let { $rps } = res; 
 

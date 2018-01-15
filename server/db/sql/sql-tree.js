@@ -9,7 +9,11 @@ module.exports = {
         new: (uid, uname, pwd) => `
             INSERT INTO \`Users\` (uid, uname, pwd) VALUES ('${uid}', '${uname}', '${pwd}');
         `,
-        count: `SELECT COUNT(*) AS COUNT FROM Users`
+        count: `SELECT COUNT(*) AS COUNT FROM Users`,
+        updateOne: key => `
+            UPDATE Users SET ${key} = ?
+            WHERE uid = ?
+        `
     },
     blogs: {
         count: `
