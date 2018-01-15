@@ -9,7 +9,7 @@ export default {
                 d.getFullYear()
             ].concat(
                 [
-                    d.getMonth(),
+                    d.getMonth() + 1,
                     d.getDate()
                 ].map(e => ('00' + e).slice(-2))
             ).join('-')
@@ -29,7 +29,7 @@ export default {
                 d.getFullYear()
             ].concat(
                 [
-                    d.getMonth(),
+                    d.getMonth() + 1,
                     d.getDate()
                 ].map(e => ('00' + e).slice(-2))
             ).join('-')
