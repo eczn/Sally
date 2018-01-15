@@ -1,31 +1,39 @@
 <template>
     <div class="user" v-if="user">
-        <div class="bg" :style="{
-            backgroundImage: `url(${user.avatar})`
+        <form ref="form" v-if="me">
+            <input type="hidden" name="uid" v-model="me.uid" />
+            <input type="file" name="img" id="my-bg" class="bg-input"
+                @change="toUpload('bg_url')" />
+            <input type="file" name="img" id="my-avatar" class="bg-input" 
+                @change="toUpload('avatar')" />
+        </form>
+
+        <label for="my-bg" class="bg" :style="{
+            backgroundImage: `url(${user.bg_url})`
         }">
-            <div class="user-avatar" :style="{
+            <label for="my-avatar" class="user-avatar" :style="{
                 backgroundImage: `url(${user.avatar})`
-            }"></div>
+            }"></label>
             <div class="username">
                 {{ user.uname }}
             </div>
             <div class="userintro" @click="toUpdate('uintro')">
                 {{ user.uintro || '该用户还没有写介绍喔' }}
             </div>
-        </div>
+        </label>
 
         <div class="content">
             <div class="line" @click="toUpdate('mail')">
                 <p class="l">@: </p>
-                <p class="r">{{ user.mail || '-' }}</p>
+                <p class="r">{{ user.mail || '未设置' }}</p>
             </div>
             <div class="line" @click="toUpdate('github')">
                 <p class="l">>_ </p>
-                <p class="r">{{ user.github || '-' }}</p>
+                <p class="r">{{ user.github || '未设置' }}</p>
             </div>
             <div class="line" @click="toUpdate('sf')">
                 <p class="l">S<span style="color: rgba(20, 174, 117, .5);" class="sf-green">F</span> </p>
-                <p class="r">{{ user.sf || '-' }}</p>
+                <p class="r">{{ user.sf || '未设置' }}</p>
             </div>
             <div></div>
             <div class="line" @click="$message({
@@ -70,6 +78,8 @@
 
 <script>
 import http from '@/utils/http.client'; 
+// import $ from 'jquery'; 
+import axios from 'axios'; 
 
 export default {
     name: 'user', 
@@ -168,6 +178,28 @@ export default {
                 let { code, data } = res; 
                 if (code === 2000) this.user[key] = val; 
             })
+        },
+        toUpload(toUpdateKey){
+            let data = new FormData(this.$refs.form);  
+
+            console.log(toUpdateKey)
+
+            axios.request({
+                url: '/api/img', 
+                method: 'post', 
+                data: data
+            }).then(resp => {
+                return resp.data; 
+            }).then(res => {
+                let { code, data, msg } = res; 
+                console.log(res); 
+
+                return this.pushUpdate(toUpdateKey, data.url); 
+            }).then(ok => {
+                setTimeout(() => location.reload(), 800); 
+            }).catch(err => {
+                console.log(err); 
+            })
         }
     }
 }
@@ -176,12 +208,16 @@ export default {
 
 <style lang="sass">
 .user 
+    .bg-input 
+        display: none
     max-width: 700px
     margin: 0 auto
-    .bg 
+    .bg
+        display: block 
         position: relative
         height: 300px
         background-position: center
+        background-size: cover
         background-color: #DDD
         > * 
             position: absolute

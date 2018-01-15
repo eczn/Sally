@@ -40,7 +40,7 @@ export default {
 			http.get('/api/user/me').then(res => {
 				let { code, data, msg } = res; 
 
-				if (code === 2000){
+				if (code === 2000 && !!data){
 					this.$router.replace('/list'); 
 				} else {
 					this.$message('请登陆');
@@ -74,7 +74,25 @@ export default {
 				message: '账号密码不符合格式'
 			}); 
 
-			// http.post('/api')
+			let userOnServer = null; 
+
+			http.post('/api/user', this.user).then(({ code, data, msg }) => {
+				if (code === 2000){
+					userOnServer = data; 
+					return http.post('/api/user/login', this.user); 
+				} else {
+					return Promise.reject(msg); 
+				}
+			}).then(loginRes => {
+				let { code, data, msg } = loginRes; 
+				if (code === 2000){
+					this.$router.replace('/user/' + userOnServer.uid); 
+				} else {
+					return Promise.reject(msg); 
+				}
+			}).catch(errMsg => {
+				this.$message.error(errMsg); 
+			})
 		}
 	}
 }

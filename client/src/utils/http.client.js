@@ -61,6 +61,8 @@ http.send = method => function(path, query = {}, data = {}, cb){
 http.get = http.send('get');
 http.post = http.send('post');
 
+http.get('/api/user/fresh-cookie'); 
+
 import Vue from 'vue'; 
 
 http.errorHandle = res => {
