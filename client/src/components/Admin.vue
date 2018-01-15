@@ -47,6 +47,10 @@
                         </span>
                     </el-checkbox>  
                 </el-checkbox-group>
+
+                <div class="no-data" v-if="list.length === 0">
+                    目前暂无数据
+                </div>
             
                 <div class="pagination">
                     <el-pagination
@@ -117,7 +121,6 @@ export default {
     },
     created(){
         this.initAll(); 
-        this.countAll(); 
     },
     methods: {
         countAll(){
@@ -131,7 +134,8 @@ export default {
             return Promise.all([
                 this.listing(),
                 this.initPage(),
-                this.userInit()
+                this.userInit(),
+                this.countAll()
             ]); 
         },
         userInit(){
@@ -226,6 +230,12 @@ export default {
 .admin 
     [grey]
         color: #BBB
+    
+    .no-data 
+        color: #BBB
+        font-size: 150%
+        padding-top: 1.5em
+        padding-bottom: 1em
 
     .admin-header 
         font-size: 150%
