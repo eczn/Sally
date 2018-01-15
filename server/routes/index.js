@@ -6,6 +6,7 @@ const express = require('express')
 	, cate = require('./cate')
 	, rps = require('./rps')
 	, sys = require('./sys')
+	, comment = require('./comment')
 
 router.use('*', function(req, res, next){
 	let $rps = rps.of(res); 
@@ -32,5 +33,7 @@ router.use('/sys', sys);
 router.use('/blog', blog); 
 
 router.use('/cate', cate);
+
+router.use('/comment', comment); 
 
 module.exports = router;

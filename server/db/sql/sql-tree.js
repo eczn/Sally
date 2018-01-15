@@ -60,6 +60,9 @@ module.exports = {
     comments: {
         new: `
             INSERT INTRO \`Comments\` (coid, bid, uid, text) VALUES (?, ?, ?, ?); 
+        `,
+        findWith: key => `
+            SELECT * FROM Comments WHERE ${key} = ?
         `
     },
     sys: {
