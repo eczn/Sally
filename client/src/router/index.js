@@ -7,6 +7,7 @@ import Detail from '@/components/Detail';
 import Edit from '@/components/Edit'; 
 import User from '@/components/User'; 
 import Cates from '@/components/Cates'; 
+import Pics from '@/components/Pics'
 
 Vue.use(Router);
 
@@ -52,6 +53,11 @@ export default new Router({
 			path: '/cates', 
 			name: 'Cates', 
 			component: Cates
+		},
+		{
+			path: '/Pics',
+			name: 'Pics', 
+			component: Pics
 		}
 	]
 });
