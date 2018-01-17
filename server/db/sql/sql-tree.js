@@ -165,6 +165,12 @@ module.exports = {
         `,
         new: `
             INSERT INTO Images (imid, uid, url) VALUES (?, ?, ?); 
+        `,
+        findAll: `
+            SELECT uname, Images.uid, avatar, imid, url, Images.created_at
+            FROM Images, Users 
+            WHERE Images.uid = Users.uid 
+            ORDER BY Images.created_at DESC
         `
     }
 }

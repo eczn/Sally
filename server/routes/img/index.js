@@ -19,6 +19,14 @@ router.get('/', function(req, res){
     }).catch(err => $rps(5001, err)); 
 }); 
 
+router.get('/all', function(req, res){
+    let { $rps } = res; 
+
+    Model.$('/images/findAll').then(list => {
+        $rps(2000, list); 
+    }).catch(err => $rps(5001, err)); 
+})
+
 router.post('/', upload.single('img'), function (req, res, next) {
     // req.file 是 `img` 文件的信息
     // req.body 将具有文本域数据，如果存在的话 
