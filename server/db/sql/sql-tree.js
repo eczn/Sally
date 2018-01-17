@@ -76,6 +76,16 @@ module.exports = {
             WHERE Blogs.caid = Cates.caid AND 
                 Blogs.uid = Users.uid AND 
                 Users.uid = ?
+        `,
+        findByCate: `
+            SELECT  
+                Blogs.bid,  Blogs.content, Blogs.title,  Blogs.created_at, Blogs.md_src,
+                Blogs.caid, Cates.cname,   Cates.intro,
+                Blogs.uid,  Users.uname,   Users.avatar
+            FROM Blogs, Cates, Users
+            WHERE Blogs.caid = Cates.caid AND 
+                Blogs.uid = Users.uid AND 
+                Blogs.caid = ?
         `
     },
     cates: {
@@ -87,7 +97,14 @@ module.exports = {
             WHERE Cates.uid = Users.uid 
         `, 
         listAll: `
-            SELECT * FROM Cates;
+            SELECT caid, cname, Cates.intro, Cates.created_at, uname, Cates.uid, avatar
+            FROM Cates, Users 
+            WHERE Cates.uid = Users.uid; 
+        `,
+        countForBlog: `
+            SELECT Cates.caid, cname, intro, Cates.created_at, COUNT(bid) AS count FROM Cates, Blogs 
+            WHERE Blogs.caid = Cates.caid
+            GROUP BY Cates.caid;
         `
     },
     comments: {

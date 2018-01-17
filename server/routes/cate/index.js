@@ -21,6 +21,16 @@ router.get('/', function(req, res){
     }); 
 }); 
 
+router.get('/count-4-blog', function(req, res){
+    let { $rps } = res; 
+
+    Model.$('/cates/countForBlog').then(sqlRes => {
+        $rps(2000, sqlRes); 
+    }).catch(err => {
+        $rps(5001, err); 
+    }); 
+})
+
 router.post('/', function(req, res){
     let { $rps } = res; 
 

@@ -32,6 +32,18 @@ router.get('/by-user', function(req, res){
         console.log(err); 
         $rps(5001, err); 
     }); 
+});
+
+router.get('/by-cate', function(req, res){
+    let { $rps } = res; 
+    let { caid } = req.query; 
+
+    Model.$('/blogs/findByCate', caid).then(sqlRes => {
+        $rps(2000, sqlRes); 
+    }).catch(err => {
+        console.log(err); 
+        $rps(5001, err); 
+    }); 
 })
 
 router.get('/one', function(req, res){
