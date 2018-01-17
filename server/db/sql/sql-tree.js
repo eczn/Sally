@@ -61,7 +61,7 @@ module.exports = {
             INSERT INTO \`Blogs\` (uid, bid, caid, title, md_src, content) VALUES (?, ?, ?, ?, ?, ?);
         `,
         remove: `
-            DELETE FROM Blogs WHERE uid = ? AND bid = ?;
+            DELETE FROM Blogs WHERE bid = ?;
         `,
         update: `
             UPDATE Blogs SET title = ?, content = ?, md_src = ?

@@ -112,9 +112,9 @@ router.get('/count', function(req, res){
 router.post('/del', function(req, res){
     let { $rps } = res; 
     let { bid } = req.body; 
-    let { uid } = req.user; 
+    // let { uid } = req.user; 
 
-    Model.$('/blogs/remove', uid, bid).then(res => {
+    Model.$('/blogs/remove', bid).then(res => {
         $rps(2000, res); 
     }).catch(err => {
         $rps(5001, err); 
