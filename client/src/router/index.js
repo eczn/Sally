@@ -6,6 +6,7 @@ import Admin from '@/components/Admin';
 import Detail from '@/components/Detail'; 
 import Edit from '@/components/Edit'; 
 import User from '@/components/User'; 
+import Cates from '@/components/Cates'; 
 
 Vue.use(Router);
 
@@ -46,6 +47,11 @@ export default new Router({
 			path: '/edit', 
 			name: 'Edit', 
 			component: Edit
+		},
+		{
+			path: '/cates', 
+			name: 'Cates', 
+			component: Cates
 		}
 	]
 });
