@@ -61,6 +61,9 @@
                 <el-button type="primary" icon="el-icon-search" @click="$router.push('/cates')">
                     分类
                 </el-button>
+                <el-button type="primary" icon="el-icon-picture" @click="$router.push('/pics')">
+                    照片墙
+                </el-button>
             </div>
         </div>
 
