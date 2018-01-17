@@ -63,7 +63,7 @@
                     </el-pagination>
                 </div>
 
-                <el-footer>
+                <div class="blogs-footer">
                     <h1>共计</h1>
                     <p>
                         <span bigger>{{ COUNTER.Blogs | preFill('00') }}</span> 篇博文
@@ -80,7 +80,78 @@
                     <p>
                         <span bigger>{{ COUNTER.Images | preFill('00') }}</span> 张图片
                     </p>
-                </el-footer>
+                </div>
+
+                <div class="cate-manage">
+                    <div class="tools">
+                        <el-button @click="cMode = true">新建分类</el-button>
+                        <el-button type="primary" @click="editCate">编辑分类</el-button>
+                        <el-button type="danger" @click="rmCate">删除分类</el-button>
+                    </div>
+
+                    <div class="cates">
+                        <!-- {{ selectedCate }} -->
+                        <el-collapse-transition>
+                            <div v-if="cMode" class="cate to-add">
+                                <el-input v-model="newCate.cname" placeholder="分类名"></el-input>
+                                <el-input v-model="newCate.intro" placeholder="分类简介"></el-input>
+                                <el-button type="primary" @click="addCate">保存</el-button>
+                                <el-button @click="cMode = false">取消</el-button>
+                            </div>
+                        </el-collapse-transition>
+
+                        <el-collapse-transition>
+                            <div v-if="eMode" class="cate to-add">
+                                <el-input v-model="selectedCate.cname" placeholder="分类名"></el-input>
+                                <el-input v-model="selectedCate.intro" placeholder="分类简介"></el-input>
+                                <el-button type="primary" @click="updateCate">提交</el-button>
+                                <el-button @click="eMode = false">取消</el-button>
+                            </div>
+                        </el-collapse-transition>
+                        
+                        <div class="cate" v-for="(cate, idx) in cates" :key="idx">
+                            <el-radio v-model="selectedCate" :label="cate">
+                                {{ cate.cname }}
+                                <div class="cate-inner">
+                                    {{ cate.intro }} by {{ cate.uname }}
+                                    <p>{{ cate.created_at | sallyTime }}</p>
+                                </div>
+                            </el-radio>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="user-manage cates">
+                    <div class="tools">
+                        <el-button type="primary" @click="editUser">编辑用户</el-button>
+                        <el-button type="danger" @click="rmUser">删除用户</el-button>
+                    </div>
+                    
+                    <el-collapse-transition>
+                        <div v-if="eUMode" class="cate to-add">
+                            <el-input disabled v-model="selectedUser.uname" placeholder="用户名"></el-input>
+                            <el-input disabled v-model="selectedUser.uintro" placeholder="用户介绍"></el-input>
+
+                            <el-select v-model="selectedUser.role" placeholder="用户身份">
+                                <el-option label="管理员" :value="0"></el-option>
+                                <el-option label="普通用户" :value="1"></el-option>
+                            </el-select>
+
+                            <el-button type="primary" @click="updateUser">提交</el-button>
+                            <el-button @click="eUMode = false">取消</el-button>
+                        </div>
+                    </el-collapse-transition>
+
+                    <div class="cate" v-for="(user, idx) in users" :key="idx">
+                        <el-radio v-model="selectedUser" :label="user">
+                            {{ user.uname }}
+                            <div class="cate-inner">
+                                {{ user.uintro }}
+                                <p>{{ user.created_at | sallyTime }}</p>
+                            </div>
+                        </el-radio>
+                    </div>
+                </div>
             </el-main>
         </el-container>
     </el-container>
@@ -101,7 +172,18 @@ export default {
             count: 0,
             user: null,
             selectedList: [],
-            COUNTER: {}
+            COUNTER: {},
+            cates: [],
+            selectedCate: null,
+            cMode: false,
+            newCate: {
+                cname: '',
+                intro: ''
+            },
+            eMode: false,
+            users: [],
+            selectedUser: null,
+            eUMode: false 
         }
     }, 
     computed: {
@@ -135,8 +217,20 @@ export default {
                 this.listing(),
                 this.initPage(),
                 this.userInit(),
-                this.countAll()
+                this.countAll(),
+                this.cateInit(),
+                this.initUsers()
             ]); 
+        },
+        initUsers(){
+            return http.get('/api/user').then(res => {
+                this.users = res.data; 
+            })
+        }, 
+        cateInit(){
+            return http.get('/api/cate').then(res => {
+                this.cates = res.data; 
+            })
         },
         userInit(){
             return http.get('/api/user/me').then(res => {
@@ -220,6 +314,71 @@ export default {
                     message: '已取消操作'
                 });
             });
+        },
+        addCate(){
+            let { cname, intro } = this.newCate;
+
+            return http.post('/api/cate', {
+                cname, intro
+            }).then(res => {
+                this.cMode = false; 
+                return this.cateInit();
+            })
+        },
+        rmCate(){
+            if (!this.selectedCate) return this.$message({
+                type: 'warning',
+                message: '请选择后继续'
+            }); 
+
+            return http.post('/api/cate/remove', {
+                caid: this.selectedCate.caid
+            }).then(res => {
+                return this.cateInit();
+            })
+        },
+        editCate(){
+            if (!this.selectedCate) return this.$message({
+                type: 'warning',
+                message: '请选择后继续'
+            }); 
+
+            this.eMode = true; 
+        },
+        updateCate(){
+            let { caid, cname, intro } = this.selectedCate; 
+
+            return http.post('/api/cate/update', {
+                caid, cname, intro, 
+            }).then(res => {
+                this.eMode = false; 
+                return this.cateInit(); 
+            }); 
+        },
+        editUser(){
+            if (!this.selectedUser) return this.$message({
+                type: 'warning',
+                message: '请选择后继续'
+            }); 
+
+            this.eUMode = true; 
+        },
+        rmUser(){
+            if (!this.selectedUser) return this.$message({
+                type: 'warning',
+                message: '请选择后继续'
+            }); 
+
+            return http.post('/api/user/delete', {
+                uid: this.selectedUser.uid
+            }).then(res => {
+                return this.initUsers(); 
+            })
+        },
+        updateUser(){
+            return http.post('/api/user/update-role', this.selectedUser).then(res => {
+                return this.initUsers(); 
+            }); 
         }
     }
 }
@@ -271,10 +430,11 @@ export default {
             margin-bottom: .5em
             margin-left: .25em
 
-    .el-footer 
+    .blogs-footer 
         width: 500px 
         position: relative
         padding-left: 100px
+        margin-bottom: 2em
 
         * 
             vertical-align: middle
@@ -295,4 +455,21 @@ export default {
             width: 25%
             font-size: 12px 
             margin-bottom: 1em
+
+    .cates 
+        .to-add 
+            width: 300px
+            > * 
+                display: inline-block
+                margin-bottom: 1em
+        .cate 
+            
+            font-size: 24px
+
+            .cate-inner 
+                margin: 8px 0
+                line-height: 1.5
+
+    .user-manage 
+        margin-top: 2em
 </style>
