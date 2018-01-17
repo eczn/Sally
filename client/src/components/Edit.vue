@@ -7,6 +7,7 @@
                 }" v-model="editing.md_src" 
                 ref="md"
                 @save="save"
+                @imgAdd="$imgAdd"
             />
 
             <!-- <div class="t">{{ editing }}</div> -->
@@ -27,6 +28,7 @@
 
 <script>
 import http from '@/utils/http.client'; 
+import axios from 'axios'; 
 
 export default {
     name: 'edit', 
@@ -169,6 +171,23 @@ export default {
         },
         chooseCate(){
             
+        },
+        $imgAdd(pos, $file){
+            let formdata = new FormData();  
+            formdata.append('img', $file);
+
+            return axios.request({
+                url: '/api/img', 
+                method: 'post', 
+                data: formdata
+            }).then(resp => {
+                return resp.data; 
+            }).then(res => {
+                let { code, data, msg } = res; 
+                let { url, imid, uid } = data; 
+
+                this.md.$img2Url(pos, url); 
+            }); 
         }
     }
 }
