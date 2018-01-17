@@ -1,7 +1,9 @@
 <template>
     <el-container class="admin">
-        <el-header class="admin-header">Sally Admin</el-header>
-        <el-container>
+        <el-header class="admin-header" :class="{
+            'err-header': err
+        }">Sally Admin</el-header>
+        <el-container v-if="!err">
             <el-aside width="200px">
                 <div class="preview" v-if="SELECTED">
                     <div class="title">
@@ -154,6 +156,13 @@
                 </div>
             </el-main>
         </el-container>
+        <el-container>
+            <div class="deny">
+                <p>拒绝访问，权限不足</p>
+
+                <el-button type="danger" @click="$router.back()">返回</el-button>
+            </div>
+        </el-container>
     </el-container>
 </template>
 
@@ -183,7 +192,8 @@ export default {
             eMode: false,
             users: [],
             selectedUser: null,
-            eUMode: false 
+            eUMode: false,
+            err: false
         }
     }, 
     computed: {
@@ -202,21 +212,38 @@ export default {
         }
     },
     created(){
-        this.initAll(); 
+
+        this.userInit().then(userOK => {
+            return this.judge(); 
+        }).then(judgeOk => {
+            return this.initAll(); 
+        }).catch(err => {
+            this.err = true; 
+            return this.$notify.error({
+                title: '权限不足，拒绝访问',
+                message: '只有管理员可以访问后端控制台'
+            });
+        }); 
     },
     methods: {
         countAll(){
             return http.get('/api/sys/count-all').then(res => {
                 let { code, data } = res; 
-
+    
                 this.COUNTER = data; 
             })
+        },
+        judge(){
+            if (this.user.role !== 0){
+                return Promise.reject('permission deny');
+            } else {
+                return Promise.resolve('permission resolve'); 
+            }
         },
         initAll(){
             return Promise.all([
                 this.listing(),
                 this.initPage(),
-                this.userInit(),
                 this.countAll(),
                 this.cateInit(),
                 this.initUsers()
@@ -472,4 +499,18 @@ export default {
 
     .user-manage 
         margin-top: 2em
+
+    
+    .deny 
+        font-size: 40px
+        text-align: center
+        color: #BBB
+        margin: 4em 0 
+        width: 100%
+
+        p 
+            margin-bottom: .5em
+
+    .err-header 
+        text-align: center
 </style>
