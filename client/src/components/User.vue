@@ -11,9 +11,16 @@
         <label for="my-bg" class="bg" :style="{
             backgroundImage: `url(${user.bg_url})`
         }">
+            <div v-if="isMe" class="click-to-click">
+                <span>点击上传</span>
+            </div>
             <label for="my-avatar" class="user-avatar" :style="{
                 backgroundImage: `url(${user.avatar})`
-            }"></label>
+            }">
+                <div v-if="isMe" class="click-to-click avatar">
+                    <span>点击上传</span>
+                </div>
+            </label>
             <div class="username">
                 {{ user.uname }}
             </div>
@@ -258,6 +265,42 @@ export default {
             top: 100%
             right: 10%
             margin: .5em 0
+
+        .click-to-click
+            position: absolute
+            line-height: 300px
+            height: 300px
+            left: 0%
+            text-align: center
+            color: #FFF
+            width: 100%
+            font-size: 0
+            transition: all .3s
+            background-color: rgba(0, 0, 0, .5)
+            cursor: pointer
+            font-size: 18px
+
+            opacity: 0
+            
+            &:hover 
+                opacity: 1
+
+            &.avatar 
+                height: 120px
+                width: 120px
+                margin-left: -3px
+                margin-top: -3px
+                font-size: 12px
+                box-sizing: border-box;
+                line-height: 120px
+                border-radius: 120px
+
+            span
+                transition: all .3s
+                background-color: #409EFF
+                padding: .5em 1em
+                border-radius: 4px
+                transform: scale(1.5)
 
     .content
         padding-bottom: 50px
