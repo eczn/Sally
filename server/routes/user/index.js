@@ -129,5 +129,31 @@ router.post('/login', function(req, res){
     })
 });
 
+router.get('/', function(req, res){
+    let { $rps } = res; 
+    
+    Model.$('/users/findAll').then(sqlRes => {
+        $rps(2000, sqlRes); 
+    }).catch(err => $rps(5001, err)); 
+});
+
+router.post('/delete', function(req, res){
+    let { uid } = req.body;
+    let { $rps } = res; 
+
+    Model.$('/users/remove', uid).then(res => {
+        $rps(2000, res); 
+    }).catch(err => $rps(5001, err)); 
+}); 
+
+router.post('/update-role', function(req, res){
+    let { uid, role } = req.body;
+    let { $rps } = res; 
+
+    Model.$('/users/update', role, uid).then(res => {
+        $rps(2000, res); 
+    }).catch(err => $rps(5001, err)); 
+}); 
+
 module.exports = router;
 

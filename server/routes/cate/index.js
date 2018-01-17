@@ -39,7 +39,7 @@ router.post('/', function(req, res){
     let uid = req.user.uid; 
 
     if (!cname || !cname.trim() || !intro || !intro.trim()) {
-        $rps(4000, req.body); 
+        return $rps(4000, req.body); 
     }
 
     // uid, caid, cname, intro
@@ -51,4 +51,28 @@ router.post('/', function(req, res){
     }).catch(err => {
         $rps(5001, err); 
     })
+}); 
+
+router.post('/remove', function(req, res){
+    let { $rps } = res; 
+    let { caid } = req.body; 
+
+    if (!caid || !caid.trim()) return $rps(4000, req.body); 
+
+    Model.$('/cates/remove', caid).then(sqlRes => {
+        $rps(2000, req.body); 
+    }).catch(err => $rps(5001, err)); 
+}); 
+
+router.post('/update', function(req, res){
+    let { $rps } = res; 
+    let { caid, cname, intro } = req.body; 
+
+    if (
+        !caid || !caid.trim()
+    ) return $rps(4000, req.body); 
+
+    Model.$('/cates/update', cname, intro, caid).then(sqlRes => {
+        $rps(2000, req.body); 
+    }).catch(err => $rps(5001, err)); 
 }); 

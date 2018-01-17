@@ -1,7 +1,10 @@
 // sql.list.js
 module.exports = {
     users: {
-        findAll: 'SELECT * FROM Users', 
+        findAll: `
+            SELECT uid, uname, avatar, role, created_at, uintro, mail, github, sf, bg_url
+            FROM Users
+        `, 
         findOne: key => `
             SELECT uid, uname, avatar, role, created_at, uintro, mail, github, sf, bg_url
             FROM \`Users\` WHERE \`${key}\` = ?
@@ -16,6 +19,13 @@ module.exports = {
         count: `SELECT COUNT(*) AS COUNT FROM Users`,
         updateOne: key => `
             UPDATE Users SET ${key} = ?
+            WHERE uid = ?
+        `,
+        remove: `
+            DELETE FROM Users WHERE uid = ?;
+        `,
+        update: `
+            UPDATE Users SET role = ?
             WHERE uid = ?
         `
     },
@@ -102,9 +112,18 @@ module.exports = {
             WHERE Cates.uid = Users.uid; 
         `,
         countForBlog: `
-            SELECT Cates.caid, cname, intro, Cates.created_at, COUNT(bid) AS count FROM Cates, Blogs 
-            WHERE Blogs.caid = Cates.caid
+            SELECT Cates.caid, cname, intro, Cates.created_at, COUNT(bid) AS count, uname
+            FROM Cates, Blogs, Users
+            WHERE Cates.caid = Blogs.caid AND
+                Cates.uid = Users.uid
             GROUP BY Cates.caid;
+        `,
+        remove: `
+            DELETE FROM Cates WHERE caid = ?;
+        `,
+        update: `
+            UPDATE Cates SET cname = ?, intro = ?
+            WHERE caid = ?
         `
     },
     comments: {
