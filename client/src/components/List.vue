@@ -337,19 +337,20 @@ header {
     opacity: 1;
 }
 .blog:hover .title {
-    margin-left: -16px;
+    /* margin-left: -16px;
     margin-top: .5em;
     margin-bottom: .8em; 
     text-shadow: 44px  12px 0 rgba(0, 0, 0, .1),
                  16px -6px 0 rgba(0, 0, 0, .05);
-    color: #222;
+    */
+    color: #222; 
 }
 .blog:hover .top-line,
 .blog:hover .intro {
-    margin-left: 6px;
+    margin-left: 10px;
 }
 .blog:hover .cate {
-    margin-left: 14px;
+    margin-left: 16px;
 }
 
 .bottom-btn {
