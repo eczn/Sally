@@ -20,89 +20,60 @@
         </header>
 
 
-        <div class="list" v-if="!searchMode">
-            <div @click="toDetail(blog)" class="blog"
-                v-for="(blog, idx) in list" :key="idx">
-
-                <div class="line top-line">
-                    <div class="created_at">
-                        <img src="../assets/icons/date.svg" class="blog-icon">
-                        <span>{{ blog.created_at | sallyDate }}</span>
-                    </div>
-
-                    <div class="tags">
-                        <img src="../assets/icons/tag.svg" class="blog-icon">
-                        <span>Sally</span>
-                    </div>
-                </div>
-                <div class="title">{{ blog.title }}</div>
-                <div class="intro">{{ blog.md_src.slice(0, 20) }} ...</div>
-
-                <div class="line">
-                    <div class="cate">分类于{{ blog.cname }}, @{{ blog.uname }}</div>
-                </div>
-            </div>
-
-            <div class="block">
-                <el-pagination
-                    background
-                    layout="prev, pager, next"
-                    :size="param.N"
-                    :page-count="PAGE_COUNT"
-                    @current-change="pageChange"
-                >
-                </el-pagination>
-            </div>
-
-            <div class="bottom-btn">
-                <el-button type="primary" icon="el-icon-search" @click="toSearch">
-                    搜索
+        <div class="list">
+            <div class="cates">
+                <h2>分类</h2>
+                <el-button v-for="(cate, idx) in cates" :key="idx"
+                    @click="chooseCate(cate)">
+                    {{ cate.cname }}
                 </el-button>
-                <el-button type="primary" icon="el-icon-search" @click="$router.push('/cates')">
-                    分类
+                <el-button
+                    @click="$router.push('/list')">
+                    返回首页
                 </el-button>
             </div>
+
+            <div class="no-cate-selected" v-if="!selectedCate">
+                选择分类进行查询
+            </div>
+            <div class="cate-intro" v-else>
+                <p class="i-came">{{ selectedCate.cname }}</p>
+                <p class="i-cintro">{{ selectedCate.intro }}</p>
+                <p class="i-uname">由
+                    <span
+                        style="color: #409EFF; text-decoration: underline; cursor: pointer;"
+                        @click="$router.push('/user/' + selectedCate.uid)"
+                    >{{ selectedCate.uname }}</span>
+                创建，于 {{ selectedCate.created_at | sallyTime }}</p>
+            </div>
+
+            <div class="blogs-inner">
+                <div @click="toDetail(blog)" class="blog"
+                    v-for="(blog, idx) in list" :key="idx"
+                    v-if="selectedCate">
+
+                    <div class="line top-line">
+                        <div class="created_at">
+                            <img src="../assets/icons/date.svg" class="blog-icon">
+                            <span>{{ blog.created_at | sallyDate }}</span>
+                        </div>
+
+                        <div class="tags">
+                            <img src="../assets/icons/tag.svg" class="blog-icon">
+                            <span>Sally</span>
+                        </div>
+                    </div>
+                    <div class="title">{{ blog.title }}</div>
+                    <div class="intro">{{ blog.md_src.slice(0, 20) }} ...</div>
+
+                    <div class="line">
+                        <div class="cate">分类于{{ blog.cname }}, @{{ blog.uname }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="middle-text" v-if="selectedCate">共计 {{ list.length }} 篇</div>
         </div>
-
-
-        <div class="list" v-else>
-            <div class="bottom-btn">
-                <el-button type="primary" icon="el-icon-search" @click="searchMode = false">
-                    关闭搜索
-                </el-button>
-            </div>
-
-            <div class="middle-text" v-if="searchList.length === 0">暂无 '{{ searchWord }}' 的搜索结果</div>
-            <div class="middle-text" v-else>以下为 '{{ searchWord }}' 的搜索结果</div>
-            <div @click="toDetail(blog)" class="blog"
-                v-for="(blog, idx) in searchList" :key="idx">
-
-                <div class="line top-line">
-                    <div class="created_at">
-                        <img src="../assets/icons/date.svg" class="blog-icon">
-                        <span>{{ blog.created_at | sallyDate }}</span>
-                    </div>
-
-                    <div class="tags">
-                        <img src="../assets/icons/tag.svg" class="blog-icon">
-                        <span>Sally</span>
-                    </div>
-                </div>
-                <div class="title">{{ blog.title }}</div>
-                <div class="intro">{{ blog.md_src.slice(0, 20) }} ...</div>
-
-                <div class="line">
-                    <div class="cate">分类于{{ blog.cname }}, @{{ blog.uname }}</div>
-                </div>
-            </div>
-
-            <div class="middle-text" v-if="searchList.length !== 0">共计 {{ searchList.length }} 条</div>
-        </div>
-
-
-
-
-
 
     </div>
 </template>
@@ -111,7 +82,7 @@
 import http from '@/utils/http.client'; 
 
 export default {
-    name: 'list', 
+    name: 'cates', 
     data(){
         return {
             param: {
@@ -120,10 +91,9 @@ export default {
             },
             list: [],
             count: 0,
+            cates: [], 
             user: null,
-            searchMode: false,
-            searchList: [],
-            searchWord: ''
+            selectedCate: null
         }
     }, 
     computed: {
@@ -140,8 +110,9 @@ export default {
     },
     created(){
         this.listing(); 
-        this.initPage();
-        this.userInit(); 
+
+        this.userInit();
+        this.catesInit();
     },
     methods: {
         toLogin(){
@@ -152,10 +123,22 @@ export default {
                 }
             }); 
         },
+        catesInit(){
+            return http.get('/api/cate').then(res => {
+                this.cates = res.data; 
+            })
+        },
         toMyInfo(){
             this.$router.push({
                 path: '/user/' + this.user.uid
             }); 
+        },
+        chooseCate(cate){
+            let { cname } = cate; 
+
+            this.selectedCate = cate;
+
+            return this.listing(); 
         },
         userInit(){
             return http.get('/api/user/me').then(res => {
@@ -171,14 +154,8 @@ export default {
                 this.count = data; 
             }); 
         }, 
-        pageChange(e){
-            let next = e - 1; 
-            this.param.p = next; 
-
-            this.listing(); 
-        },
         listing(){
-            return http.get('/api/blog', this.param).then(res => {
+            return http.get('/api/blog/by-cate', this.selectedCate).then(res => {
                 let { code, data } = res; 
 
                 this.list = data; 
@@ -199,28 +176,6 @@ export default {
                     message: '只有管理员才能进入管理页喔'
                 }); 
             }
-        },
-        toSearch(){
-            this.$prompt('请输入搜索关键字', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                inputPattern: /./,
-                inputErrorMessage: '格式不正确'
-            }).then(({ value }) => {
-                console.log(value); 
-                this.searchWord = value; 
-                return http.get('/api/blog/search', {
-                    q: value
-                })
-            }).then(({ code, data, msg }) => {
-                this.searchMode = true; 
-                this.searchList = data; 
-            }).catch(() => {
-                this.$message({
-                    type: 'info',
-                    message: '取消输入'
-                });
-            });
         }
     }
 }
@@ -282,7 +237,6 @@ header {
 }
 
 .list {
-    padding-top: 2em; 
     max-width: 700px;
     margin: 0 auto; 
 }
@@ -359,6 +313,35 @@ header {
 
 .bottom-btn {
     margin: 4em 0; 
+}
+
+.cates {
+    margin-bottom: 20px; 
+    text-align: right;
+}
+
+.cates h2 {
+    font-weight: normal; 
+    margin-bottom: 20px; 
+}
+
+.no-cate-selected {
+    font-size: 24px;
+    text-align: center; 
+    margin: 4em 0;
+    color: #BBB; 
+}
+
+.cate-intro {
+    margin-bottom: 1.5em; 
+}
+
+.i-came {
+    font-size: 36px; 
+}
+
+.blogs-inner {
+    padding-left: 2em; 
 }
 </style>
 

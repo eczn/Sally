@@ -53,6 +53,7 @@
         </div>
 
         <div v-if="isMe" class="me-btns">
+            <el-button @click="$router.push('/list')" type="primary">返回首页</el-button>
             <el-button @click="toLogout" type="danger">退出登陆</el-button>
         </div>
 
